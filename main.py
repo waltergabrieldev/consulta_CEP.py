@@ -1,33 +1,36 @@
 import tkinter as tk
-import consultando
+import consultando_cep
 import calculo_frete
 
 
 def resposta_cliente():
-        cep = caixa_entrada_cep.get()
-        sinal, dados = consultando.consulta(cep)    
+    
+        cep = entrada_cep.get()
+        sinal, resposta = consultando_cep.consulta(cep)    
+        
         if sinal == 1:
-            resposta_ao_cliente = f"CEP: {dados['cep']}\nRUA: {dados['logradouro']}\nBAIRRO: {dados['bairro']}\nCIDADE/UF: {dados['localidade']}/{dados['uf']}"
-            texto_resposta.config(text= resposta_ao_cliente, bg="white")
-            if cep[0] == "6":
-                preco = calculo_frete.frete(dados['bairro'])
-                texto_preco_frete.config(text= f"FRETE: R${preco}.00", bg="white")
+            info_endereço = f"CEP: {resposta['cep']}\nRUA: {resposta['logradouro']}\nBAIRRO: {resposta['bairro']}\nCIDADE/UF: {resposta['localidade']}/{resposta['uf']}"
+            texto_info_endereço.config(text= info_endereço, bg="white")
+            preço_frete = calculo_frete.frete(resposta['bairro'])
+            if preço_frete == None:
+                texto_info_frete.config(text= f"Endereço fora da aréa de entrega!", bg="white")
             else:
-                texto_preco_frete.config(text= f"Endereço fora da aréa de entrega!",)
+                texto_info_frete.config(text= f"FRETE: R${preço_frete}.00", bg="white")
                 
         elif sinal == 2:
-            resposta_ao_cliente = dados
-            texto_resposta.config(text= resposta_ao_cliente)
+            info_endereço = resposta
+            texto_info_endereço.config(text= info_endereço,bg="white" )
+            texto_info_frete.config(text= "",bg="#155493" )
             
         else:
-            resposta_ao_cliente = dados
-            texto_resposta.config(text= resposta_ao_cliente)
+            info_endereço = resposta
+            texto_info_endereço.config(text= info_endereço, bg="white")
+            texto_info_frete.config(text= "", bg="#155493")
             
-
-    
+ 
 janela = tk.Tk()
 janela.title("calcular frete")
-janela.iconbitmap("icone.ico")
+janela.iconbitmap("icone.ico") 
 janela.geometry("500x400")
 janela.configure(bg="#155493")
 
@@ -35,18 +38,18 @@ janela.configure(bg="#155493")
 texto_1 = tk.Label(janela, text="Bem-vindo, Digite seu CEP!")
 texto_1.place(x=180, y=70)
 
-caixa_entrada_cep = tk.Entry(janela, width=28)
-caixa_entrada_cep.place(x=170, y=100)
+entrada_cep = tk.Entry(janela, width=28)
+entrada_cep.place(x=170, y=100)
 
 
 botao = tk.Button(janela, text="calcular", command=resposta_cliente)
 botao.place(x=225, y=130)
 
-texto_resposta = tk.Label(janela, text="", justify="left", font=("Arial", 10),bg="#155493")
-texto_resposta.place(x=180, y=200)
+texto_info_endereço = tk.Label(janela, text="", justify="left", font=("Arial", 10),bg="#155493")
+texto_info_endereço.place(x=180, y=200)
 
-texto_preco_frete = tk.Label(janela, text="", justify="left", font=("Arial", 10),bg="#155493" )
-texto_preco_frete.place(x=180, y=265)
+texto_info_frete = tk.Label(janela, text="", justify="left", font=("Arial", 10),bg="#155493" )
+texto_info_frete.place(x=180, y=265)
 
 
 
